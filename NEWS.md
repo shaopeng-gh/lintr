@@ -266,6 +266,7 @@ of general interest to the broader R community. More will be included in future 
   (#1034, #1285, @michaelchirico and @AshesITR)
 * Improved S3 generic detection for non-standard S3 generics where `UseMethod()` is called after several
   preceding expressions (#846, @jonkeane)
+* New `sarif_output()` function to output lints to SARIF output (#TBD, @shaopeng-gh)
 
 ## Bug fixes
 

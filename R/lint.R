@@ -527,7 +527,7 @@ checkstyle_output <- function(lints, filename = "lintr_results.xml") {
 
   # setup file
   d <- xml2::xml_new_document()
-  n <- xml2::xml_add_child(d, "checkstyleshaopengtest", version = paste0("lintr-", utils::packageVersion("lintr")))
+  n <- xml2::xml_add_child(d, "checkstyle", version = paste0("lintr-", utils::packageVersion("lintr")))
 
   # output the style markers to the file
   lapply(split(lints, names(lints)), function(lints_per_file) {
@@ -553,6 +553,27 @@ checkstyle_output <- function(lints, filename = "lintr_results.xml") {
   })
 
   xml2::write_xml(d, filename)
+}
+
+#' SARIF Report for lint results
+#'
+#' Generate a report of the linting results using the [SARIF](https://sarifweb.azurewebsites.net/) format.
+#'
+#' @param lints the linting results.
+#' @param filename the name of the output report
+#' @export
+sarif_output <- function(lints, filename = "lintr_results.sarif") {
+
+  # package path will be NULL unless it is a relative path
+  package_path <- attr(lints, "path")
+
+  # output the style markers to the file
+  list1 <- vector(mode = "list", length = 2L)
+  list1[[1L]] <- c("apple", "banana", "rose")
+  list1[[2L]] <- c("fruit", "fruit", "flower")
+  jsonData < jsonlite::toJSON(list1)
+
+  write(jsonData, filename)
 }
 
 highlight_string <- function(message, column_number = NULL, ranges = NULL) {
