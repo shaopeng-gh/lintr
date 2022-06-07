@@ -569,7 +569,8 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
 
   # setup file
   json_data <- jsonlite::fromJSON('{
-            "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
+            "$schema": ("https://schemastore.azurewebsites.net/schemas/"
+                        "json/sarif-2.1.0-rtm.5.json"),
             "version": "2.1.0",
             "runs": [
                 {
@@ -614,7 +615,9 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
                                         },
                                         "contextRegion": {
                                             "snippet": {
-                                                "text": "print a  # indented"
+                                                "text": ("print a  # indented"
+                                                         " with 8 spaces\n"
+                                                         "\tprint b  # ind...")
                                             }
                                         }
                                     }
