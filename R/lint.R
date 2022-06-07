@@ -567,13 +567,16 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
   # package path will be NULL unless it is a relative path
   package_path <- attr(lints, "path")
 
+  # setup file
+  json_data <- jsonlite::fromJSON('["Mario", "Peach", null, "Bowser"]')
+
   # output the style markers to the file
   list1 <- vector(mode = "list", length = 2L)
   list1[[1L]] <- c("apple", "banana", "rose")
   list1[[2L]] <- c("fruit", "fruit", "flower")
-  jsonData < jsonlite::toJSON(list1)
+  json_data < jsonlite::toJSON(list1)
 
-  write(jsonData, filename)
+  write(json_data, filename)
 }
 
 highlight_string <- function(message, column_number = NULL, ranges = NULL) {
