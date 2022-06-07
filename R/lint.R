@@ -609,7 +609,7 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
                                             "startLine": 2,
                                             "startColumn": 7,
                                             "snippet": {
-                                                "text": "\tprint b  # ind..."
+                                                "text": "print b  # ind..."
                                             }
                                         },
                                         "contextRegion": {
