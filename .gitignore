@@ -18,3 +18,7 @@ testthat-problems.rds
 .dev/*.csv
 docs
 inst/doc
+/.vs/VSWorkspaceState.json
+/.vs/slnx.sqlite
+/.vs/ProjectSettings.json
+/.vs/lintr/v16/.suo
