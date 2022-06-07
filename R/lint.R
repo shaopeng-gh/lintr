@@ -636,10 +636,10 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
         }')
 
   # output the style markers to the file
-  list1 <- vector(mode = "list", length = 2L)
-  list1[[1L]] <- c("apple", "banana", "rose")
-  list1[[2L]] <- c("fruit", "fruit", "flower")
-  json_data < jsonlite::toJSON(list1)
+  # list1 <- vector(mode = "list", length = 2L)
+  # list1[[1L]] <- c("apple", "banana", "rose")
+  # list1[[2L]] <- c("fruit", "fruit", "flower")
+  # json_data < jsonlite::toJSON(list1)
 
   write(json_data, filename)
 }
