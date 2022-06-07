@@ -568,7 +568,72 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
   package_path <- attr(lints, "path")
 
   # setup file
-  json_data <- jsonlite::fromJSON('["Mario", "Peach", null, "Bowser"]')
+  json_data <- jsonlite::fromJSON('{
+            "$schema": ("https://schemastore.azurewebsites.net/schemas/"
+                        "json/sarif-2.1.0-rtm.5.json"),
+            "version": "2.1.0",
+            "runs": [
+                {
+                    "tool": {
+                        "driver": {
+                            "name": "pycodestyle",
+                            "informationUri": "https://pycodestyle.pycqa.org/",
+                            "version": "1.7.1",
+                            "rules": [
+                                {
+                                    "id": "E101",
+                                    "fullDescription": {
+                                        "text": "Never mix tabs and spaces..."
+                                    },
+                                    "defaultConfiguration": {
+                                        "level": "error"
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "results": [
+                        {
+                            "ruleId": "E101",
+                            "ruleIndex": 0,
+                            "message": {
+                                "text": "indentation contains mixed spaces..."
+                            },
+                            "locations": [
+                                {
+                                    "physicalLocation": {
+                                        "artifactLocation": {
+                                            "uri": "TestFileFolder/E10.py",
+                                            "uriBaseId": "ROOTPATH"
+                                        },
+                                        "region": {
+                                            "startLine": 2,
+                                            "startColumn": 7,
+                                            "snippet": {
+                                                "text": "\tprint b  # ind..."
+                                            }
+                                        },
+                                        "contextRegion": {
+                                            "snippet": {
+                                                "text": ("print a  # indented"
+                                                         " with 8 spaces\n"
+                                                         "\tprint b  # ind...")
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ],
+                    "columnKind": "utf16CodeUnits",
+                    "originalUriBaseIds": {
+                        "ROOTPATH": {
+                            "uri": "file:///C:/repos/repototest/"
+                        }
+                    }
+                }
+            ]
+        }')
 
   # output the style markers to the file
   list1 <- vector(mode = "list", length = 2L)
