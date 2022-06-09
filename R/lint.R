@@ -575,17 +575,17 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
                 {
                     "tool": {
                         "driver": {
-                            "name": "pycodestyle",
-                            "informationUri": "https://pycodestyle.pycqa.org/",
-                            "version": "1.7.1",
+                            "name": "lintr",
+                            "informationUri": "https://lintr.r-lib.org/",
+                            "version": "2.0.1",
                             "rules": [
                                 {
-                                    "id": "E101",
+                                    "id": "trailing_whitespace_linter",
                                     "fullDescription": {
-                                        "text": "Never mix tabs and spaces..."
+                                        "text": "Trailing whitespace is superfluous."
                                     },
                                     "defaultConfiguration": {
-                                        "level": "error"
+                                        "level": "note"
                                     }
                                 }
                             ]
@@ -593,28 +593,20 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
                     },
                     "results": [
                         {
-                            "ruleId": "E101",
+                            "ruleId": "trailing_whitespace_linter",
                             "ruleIndex": 0,
-                            "message": {
-                                "text": "indentation contains mixed spaces..."
-                            },
                             "locations": [
                                 {
                                     "physicalLocation": {
                                         "artifactLocation": {
-                                            "uri": "TestFileFolder/E10.py",
+                                            "uri": "TestFileFolder/hello.r",
                                             "uriBaseId": "ROOTPATH"
                                         },
                                         "region": {
                                             "startLine": 2,
-                                            "startColumn": 7,
+                                            "startColumn": 22,
                                             "snippet": {
-                                                "text": "print b  # ind..."
-                                            }
-                                        },
-                                        "contextRegion": {
-                                            "snippet": {
-                                                "text": "print a  # indented"
+                                                "text": "print("Hello World!") "
                                             }
                                         }
                                     }
@@ -632,13 +624,30 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
             ]
         }')
 
-  # output the style markers to the file
-  # list1 <- vector(mode = "list", length = 2L)
-  # list1[[1L]] <- c("apple", "banana", "rose")
-  # list1[[2L]] <- c("fruit", "fruit", "flower")
-  # json_data < jsonlite::toJSON(list1)
+  # assign values
+  lapply(split(lints, names(lints)), function(lints_per_file) {
+    filename <- if (!is.null(package_path)) {
+      file.path(package_path, lints_per_file[[1L]]$filename)
+    } else {
+      lints_per_file[[1L]]$filename
+    }
+    f <- xml2::xml_add_child(n, "file", name = filename)
 
-  write(json_data, filename)
+    lapply(lints_per_file, function(x) {
+      xml2::xml_add_child(
+        f, "error",
+        line = as.character(x$line_number),
+        column = as.character(x$column_number),
+        severity = switch(
+          x$type,
+          style = "note",
+          x$type
+        ),
+        message = x$message)
+    })
+  })
+
+  write(jsonlite::toJSON(json_data, pretty = TRUE), filename)
 }
 
 highlight_string <- function(message, column_number = NULL, ranges = NULL) {
