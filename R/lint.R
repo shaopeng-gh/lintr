@@ -568,86 +568,109 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
   package_path <- attr(lints, "path")
 
   # setup file
-  json_data <- jsonlite::fromJSON('{
-            "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
-            "version": "2.1.0",
-            "runs": [
-                {
-                    "tool": {
-                        "driver": {
-                            "name": "lintr",
-                            "informationUri": "https://lintr.r-lib.org/",
-                            "version": "2.0.1",
-                            "rules": [
-                                {
-                                    "id": "trailing_whitespace_linter",
-                                    "fullDescription": {
-                                        "text": "Trailing whitespace is superfluous."
-                                    },
-                                    "defaultConfiguration": {
-                                        "level": "note"
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "results": [
-                        {
-                            "ruleId": "trailing_whitespace_linter",
-                            "ruleIndex": 0,
-                            "locations": [
-                                {
-                                    "physicalLocation": {
-                                        "artifactLocation": {
-                                            "uri": "TestFileFolder/hello.r",
-                                            "uriBaseId": "ROOTPATH"
-                                        },
-                                        "region": {
-                                            "startLine": 2,
-                                            "startColumn": 22,
-                                            "snippet": {
-                                                "text": "print("Hello World!") "
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    ],
-                    "columnKind": "utf16CodeUnits",
-                    "originalUriBaseIds": {
-                        "ROOTPATH": {
-                            "uri": "file:///C:/repos/repototest/"
-                        }
-                    }
+  sarif <- jsonlite::fromJSON('{
+  "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "lintr",
+          "informationUri": "https://lintr.r-lib.org/",
+          "version": "2.0.1",
+          "rules": [
+            {
+              "id": "trailing_whitespace_linter",
+              "fullDescription": {
+                "text": "Trailing whitespace is superfluous."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              }
+            }
+          ]
+        }
+      },
+      "results": [
+        {
+          "ruleId": "trailing_whitespace_linter",
+          "ruleIndex": 0,
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "TestFileFolder/hello.r",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 22,
+                  "snippet": {
+                    "text": "print(Hello World!) "
+                  }
                 }
-            ]
-        }')
+              }
+            }
+          ]
+        }
+      ],
+      "columnKind": "utf16CodeUnits",
+      "originalUriBaseIds": {
+        "ROOTPATH": {
+          "uri": "file:///C:/repos/repototest/"
+        }
+      }
+    }
+  ]
+}', simplifyVector = TRUE, simplifyDataFrame = TRUE, simplifyMatrix = TRUE)
 
   # assign values
-  lapply(split(lints, names(lints)), function(lints_per_file) {
-    filename <- if (!is.null(package_path)) {
-      file.path(package_path, lints_per_file[[1L]]$filename)
-    } else {
-      lints_per_file[[1L]]$filename
-    }
-    f <- xml2::xml_add_child(n, "file", name = filename)
+  sarif$runs$results <- NULL
+  sarif$runs$tool$driver$rules <- NULL
+  sarif$runs$originalUriBaseIds$ROOTPATH$uri <- "New"
 
-    lapply(lints_per_file, function(x) {
-      xml2::xml_add_child(
-        f, "error",
-        line = as.character(x$line_number),
-        column = as.character(x$column_number),
-        severity = switch(
-          x$type,
-          style = "note",
-          x$type
-        ),
-        message = x$message)
-    })
+  # results <- sarif$runs[1L]$results <- NULL
+  # sarif$runs[1L][1L][1L]$tool$driver$rules
+  # rules <- sarif$runs[1L]$tool$driver$rules <- NA
+  # results <- sarif$runs["results"] <- NA
+
+  # sarif$runs[1L]$tool$driver$rules <- NULL
+  # sarif$runs[1L]["results"] <- NULL
+  # sarif$runs[1L]$originalUriBaseIds <- NULL
+
+  # results <- sarif$runs[1L]$results <- NA
+  # results <- jsonlite::fromJSON("[]")
+  # roots <- sarif$runs[1L]$originalUriBaseIds <- NA
+  # roots <- jsonlite::fromJSON("{}")
+
+  # results <- sarif["runs"][0]["results"] <- []
+  # roots <- sarif["runs"][0]["originalUriBaseIds"] <- {}
+
+  lapply(split(lints, names(lints)), function(lints_per_file) {
+    if (!is.null(package_path)) {
+      filename <- lints_per_file[[1L]]$filename
+      sarif$runs$originalUriBaseIds$ROOTPATH$uri <- package_path
+    } else {
+      filename <- lints_per_file[[1L]]$filename
+      sarif$runs$originalUriBaseIds$ROOTPATH$uri <- lints_per_file[[1L]]$filename
+    }
+    # f <- xml2::xml_add_child(n, "file", name = filename)
+
+    # lapply(lints_per_file, function(x) {
+    #   xml2::xml_add_child(
+    #     f, "error",
+    #     line = as.character(x$line_number),
+    #     column = as.character(x$column_number),
+    #     severity = switch(
+    #       x$type,
+    #       style = "note",
+    #       x$type
+    #     ),
+    #     message = x$message)
+    # })
   })
 
-  write(jsonlite::toJSON(json_data, pretty = TRUE), filename)
+  write(jsonlite::toJSON(sarif, pretty = TRUE), filename)
 }
 
 highlight_string <- function(message, column_number = NULL, ranges = NULL) {
