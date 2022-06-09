@@ -632,8 +632,10 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
   # output the style markers to the file
   lapply(split(lints, names(lints)), function(lints_per_file) {
     filename <- if (!is.null(package_path)) {
+      sarif$runs$originalUriBaseIds$ROOTPATH$uri <- "YYYY"
       file.path(package_path, lints_per_file[[1L]]$filename)
     } else {
+      sarif$runs$originalUriBaseIds$ROOTPATH$uri <- "ZZZZ"
       lints_per_file[[1L]]$filename
     }
     sarif$runs$originalUriBaseIds$ROOTPATH$uri <- filename
@@ -655,7 +657,7 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
     # })
   })
 
-  write(jsonlite::toJSON(sarif, pretty = TRUE), filename)
+  write(jsonlite::toJSON(sarif, pretty = TRUE, auto_unbox = TRUE), filename)
 }
 
 highlight_string <- function(message, column_number = NULL, ranges = NULL) {
