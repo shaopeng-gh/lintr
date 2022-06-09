@@ -627,33 +627,18 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
   # assign values
   sarif$runs$results <- NULL
   sarif$runs$tool$driver$rules <- NULL
-  sarif$runs$originalUriBaseIds$ROOTPATH$uri <- "New"
-
-  # results <- sarif$runs[1L]$results <- NULL
-  # sarif$runs[1L][1L][1L]$tool$driver$rules
-  # rules <- sarif$runs[1L]$tool$driver$rules <- NA
-  # results <- sarif$runs["results"] <- NA
-
-  # sarif$runs[1L]$tool$driver$rules <- NULL
-  # sarif$runs[1L]["results"] <- NULL
-  # sarif$runs[1L]$originalUriBaseIds <- NULL
-
-  # results <- sarif$runs[1L]$results <- NA
-  # results <- jsonlite::fromJSON("[]")
-  # roots <- sarif$runs[1L]$originalUriBaseIds <- NA
-  # roots <- jsonlite::fromJSON("{}")
-
-  # results <- sarif["runs"][0]["results"] <- []
-  # roots <- sarif["runs"][0]["originalUriBaseIds"] <- {}
-
+  sarif$runs$originalUriBaseIds$ROOTPATH$uri <- "New2"
+  
+  # output the style markers to the file
   lapply(split(lints, names(lints)), function(lints_per_file) {
-    if (!is.null(package_path)) {
-      filename <- lints_per_file[[1L]]$filename
-      sarif$runs$originalUriBaseIds$ROOTPATH$uri <- package_path
+    filename <- if (!is.null(package_path)) {
+      file.path(package_path, lints_per_file[[1L]]$filename)
     } else {
-      filename <- lints_per_file[[1L]]$filename
-      sarif$runs$originalUriBaseIds$ROOTPATH$uri <- lints_per_file[[1L]]$filename
+      lints_per_file[[1L]]$filename
     }
+    sarif$runs$originalUriBaseIds$ROOTPATH$uri <- filename
+
+
     # f <- xml2::xml_add_child(n, "file", name = filename)
 
     # lapply(lints_per_file, function(x) {
@@ -663,7 +648,7 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
     #     column = as.character(x$column_number),
     #     severity = switch(
     #       x$type,
-    #       style = "note",
+    #       style = "info",
     #       x$type
     #     ),
     #     message = x$message)
