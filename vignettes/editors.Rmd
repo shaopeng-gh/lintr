@@ -71,7 +71,7 @@ lintr can be integrated with [syntastic](https://github.com/vim-syntastic/syntas
 
 ### Installation
 
-Put the file [syntastic/lintr.vim](inst/syntastic/lintr.vim) in `syntastic/syntax_checkers/r`.
+Put the file [syntastic/lintr.vim](https://raw.githubusercontent.com/r-lib/lintr/v2.0.1/inst/syntastic/lintr.vim) in `syntastic/syntax_checkers/r`.
 If you are using [pathogen](https://github.com/tpope/vim-pathogen) this directory is `~/.vim/bundles/syntastic/syntax_checkers/r`.
 
 You will also need to add the following lines to your `.vimrc`.
@@ -116,6 +116,16 @@ let g:ale_r_lintr_lint_package = 1
 See `:h ale_r_lintr` for more information.
 
 Note that configuration through `.lintr` files are not supported.
+
+There is a work around that can be used to read the contents of a `.lintr` file
+in the root of the working directory. This would allow the use of configuration
+through `.lintr` files.
+
+``` vim
+if filereadable(".lintr")
+  let g:ale_r_lintr_options = join(readfile('.lintr'))
+endif
+```
 
 ## Sublime Text 3
 
@@ -163,7 +173,7 @@ For more information and bug reports see [Atom linter-lintr](https://github.com/
 
 ## Visual Studio Code
 
-In Visual Studio Code, [vscode-R](https://marketplace.visualstudio.com/items?itemName=REditorSupport.r) presents the lintr diagnostics from [languageserver](https://github.com/REditorSupport/languageserver).
+In Visual Studio Code, [vscode-R](https://github.com/REditorSupport/vscode-R#r-extension-for-visual-studio-code) presents the lintr diagnostics from [languageserver](https://github.com/REditorSupport/languageserver).
 
 ![VS Code Example](vscode.png "VS Code Example")
 

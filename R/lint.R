@@ -12,11 +12,13 @@
 #'
 #' * `lint()` lints a single file.
 #' * `lint_dir()` lints all files in a directory.
-#' * `line_pakage()` lints all likely locations for R files in a package, i.e.
+#' * `lint_package()` lints all likely locations for R files in a package, i.e.
 #'   `R/`, `tests/`, `inst/`, `vignettes/`, `data-raw/`, and `demo/`.
 #'
 #' Read `vigentte("lintr")` to learn how to configure which linters are run
 #' by default.
+#' Note that if files contain unparseable encoding problems, only the encoding problem will be linted to avoid
+#' unintelligible error messages from other linters.
 #'
 #' @param filename either the filename for a file to lint, or a character string of inline R code for linting.
 #' The latter (inline data) applies whenever `filename` has a newline character (\\n).
@@ -29,6 +31,8 @@
 #' @param text Optional argument for supplying a string or lines directly, e.g. if the file is already in memory or
 #' linting is being done ad hoc.
 #'
+#' @aliases lint_file
+# TODO(next release after 3.0.0): remove the alias
 #' @return A list of lint objects.
 #'
 #' @examples
@@ -86,9 +90,11 @@ lint <- function(filename, linters = NULL, ..., cache = FALSE, parse_settings = 
   }
 
   lints <- list()
-  for (expr in source_expressions$expressions) {
-    for (linter in names(linters)) {
-      lints[[length(lints) + 1L]] <- get_lints(expr, linter, linters[[linter]], lint_cache, source_expressions$lines)
+  if (!is_tainted(source_expressions$lines)) {
+    for (expr in source_expressions$expressions) {
+      for (linter in names(linters)) {
+        lints[[length(lints) + 1L]] <- get_lints(expr, linter, linters[[linter]], lint_cache, source_expressions$lines)
+      }
     }
   }
 
@@ -327,13 +333,13 @@ validate_linter_object <- function(linter, name) {
     if (is_linter_factory(linter)) {
       old <- "Passing linters as variables"
       new <- "a call to the linters (see ?linters)"
-      lintr_deprecated(old = old, new = new, version = "2.0.1.9001",
+      lintr_deprecated(old = old, new = new, version = "3.0.0",
                        type = "")
       linter <- linter()
     } else {
       old <- "The use of linters of class 'function'"
       new <- "linters classed as 'linter' (see ?Linter)"
-      lintr_deprecated(old = old, new = new, version = "2.0.1.9001",
+      lintr_deprecated(old = old, new = new, version = "3.0.0",
                        type = "")
       linter <- Linter(linter, name = name)
     }
@@ -447,7 +453,7 @@ Lint <- function(filename, line_number = 1L, column_number = 1L, # nolint: objec
   if (!missing(linter)) {
     lintr_deprecated(
       old = "Using the `linter` argument of `Lint()`",
-      version = "2.0.1.9001",
+      version = "3.0.0",
       type = ""
     )
   }
@@ -515,7 +521,7 @@ rstudio_source_markers <- function(lints) {
 
 #' Checkstyle Report for lint results
 #'
-#' Generate a report of the linting results using the [Checkstyle](http://checkstyle.sourceforge.net/) XML format.
+#' Generate a report of the linting results using the [Checkstyle](https://checkstyle.sourceforge.io) XML format.
 #'
 #' @param lints the linting results.
 #' @param filename the name of the output report
@@ -750,6 +756,7 @@ maybe_report_progress <- function(done = FALSE) {
 
 maybe_append_error_lint <- function(lints, error, lint_cache, filename) {
   if (inherits(error, "lint")) {
+    error$linter <- "error"
     lints[[length(lints) + 1L]] <- error
 
     if (!is.null(lint_cache)) {

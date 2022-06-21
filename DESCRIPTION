@@ -1,13 +1,13 @@
 Package: lintr
 Title: A 'Linter' for R Code
-Version: 2.0.1.9000
+Version: 3.0.0.9000
 Authors@R: c(
     person("Jim", "Hester", email = "james.f.hester@gmail.com", role = c("aut", "cre")),
-    person("Florent", "Angly", role = "aut"),
+    person("Florent", "Angly", role = "aut", comment = "fangly"),
     person("Russ", "Hyde", role = "aut"),
     person("Michael", "Chirico", role = "aut"),
     person("Kun", "Ren", role = "aut"),
-    person("Alexander", "Rosenstock", role = "aut")
+    person("Alexander", "Rosenstock", role = "aut", comment = "AshesITR")
     )
 URL: https://github.com/r-lib/lintr,
     https://lintr.r-lib.org
@@ -41,7 +41,7 @@ Suggests:
     rstudioapi (>= 0.2),
     testthat (>= 3.0.0),
     tibble,
-    withr
+    withr (>= 2.5.0)
 License: MIT + file LICENSE
 Encoding: UTF-8
 VignetteBuilder: knitr
