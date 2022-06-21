@@ -300,8 +300,8 @@ of general interest to the broader R community. More will be included in future 
   `# nolint: infix_spaces.` works to exclude `infix_spaces_linter` (#605, #872, @AshesITR).
    + Added the linter name to lintrs output to facilitate discovery of the correct name (#1357, @AshesITR).
 * Improved S3 generic detection for non-standard S3 generics where `UseMethod()` is called after several
-* New `sarif_output()` function to output lints to SARIF output (#TBD, @shaopeng-gh)
   preceding expressions (#846, @jonkeane).
+* New `sarif_output()` function to output lints to SARIF output (#1424, @shaopeng-gh)
 * `extraction_operator_linter()`: no longer lint `x[NULL]` (#1273, @AshesITR).
 * `is_lint_level()`: new exported helper for readably explaining which type of expression is required for a custom
   linter. Some linters are written to require the full file's parse tree (for example, `single_quotes_linter()`).
