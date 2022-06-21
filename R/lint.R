@@ -567,7 +567,7 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
   # package path will be NULL unless it is a relative path
   package_path <- attr(lints, "path")
 
-  # setup file
+  # setup template
   sarif <- jsonlite::fromJSON('{
   "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
   "version": "2.1.0",
@@ -595,6 +595,9 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
         {
           "ruleId": "trailing_whitespace_linter",
           "ruleIndex": 0,
+          "message": {
+            "text": "Trailing blank lines are superfluous."
+          },
           "locations": [
             {
               "physicalLocation": {
@@ -622,40 +625,72 @@ sarif_output <- function(lints, filename = "lintr_results.sarif") {
       }
     }
   ]
-}', simplifyVector = TRUE, simplifyDataFrame = TRUE, simplifyMatrix = TRUE)
+}', simplifyVector = TRUE, simplifyDataFrame = FALSE, simplifyMatrix = FALSE)
 
   # assign values
-  sarif$runs$results <- NULL
-  sarif$runs$tool$driver$rules <- NULL
-  sarif$runs$originalUriBaseIds$ROOTPATH$uri <- "New2"
-  
-  # output the style markers to the file
-  lapply(split(lints, names(lints)), function(lints_per_file) {
-    filename <- if (!is.null(package_path)) {
-      sarif$runs$originalUriBaseIds$ROOTPATH$uri <- "YYYY"
-      file.path(package_path, lints_per_file[[1L]]$filename)
+  sarif$runs[[1L]]$results <- NULL
+  sarif$runs[[1L]]$tool$driver$rules <- NULL
+  sarif$runs[[1L]]$tool$driver$version <- as.character(utils::packageVersion("lintr"))
+  sarif$runs[[1L]]$originalUriBaseIds$ROOTPATH$uri <- ""
+  rule_index_exists <- FALSE
+  root_path_uri <- gsub("\\\\", "/", package_path)
+
+  if (startsWith(root_path_uri, "/")) {
+    root_path_uri <- paste("file://", root_path_uri, sep = "")
+  } else {
+    root_path_uri <- paste("file:///", root_path_uri, sep = "")
+  }
+
+  if (!endsWith(root_path_uri, "/")) {
+    root_path_uri <- paste(root_path_uri, "/", sep = "")
+  }
+
+  sarif$runs[[1L]]$originalUriBaseIds$ROOTPATH$uri <- root_path_uri
+
+  # loop and assign result values
+  for (lint in lints) {
+    one_result <- list()
+
+    if (is.null(sarif$runs[[1L]]$tool$driver$rules)) {
+      rule_index_exists <- 0L
     } else {
-      sarif$runs$originalUriBaseIds$ROOTPATH$uri <- "ZZZZ"
-      lints_per_file[[1L]]$filename
+      rule_index_exists <-
+        which(sapply(sarif$runs[[1L]]$tool$driver$rules,
+                     function(x) x$id == lint$linter))
+      if (length(rule_index_exists) == 0L || is.na(rule_index_exists[1L])) {
+        rule_index_exists <- 0L
+      }
     }
-    sarif$runs$originalUriBaseIds$ROOTPATH$uri <- filename
 
+    if (rule_index_exists == 0L) {
+      new_rule <- list(id = lint$linter,
+                       fullDescription = list(text = lint$message),
+                       defaultConfiguration = list(
+                         level = switch(
+                           lint$type,
+                           style = "note",
+                           lint$type)))
+      sarif$runs[[1L]]$tool$driver$rules <- append(sarif$runs[[1L]]$tool$driver$rules, list(new_rule))
+      rule_index <- length(sarif$runs[[1L]]$tool$driver$rules) - 1L
+    } else {
+      rule_index <- rule_index_exists - 1L
+    }
 
-    # f <- xml2::xml_add_child(n, "file", name = filename)
+    one_result <- append(one_result, c(ruleId = lint$linter))
+    one_result <- append(one_result, c(ruleIndex = rule_index))
+    one_result <- append(one_result, list(message = list(text = lint$message)))
+    one_location <- list(
+      physicalLocation = list(
+        artifactLocation = list(
+          uri = gsub("\\\\", "/", lint$filename),
+          uriBaseId = "ROOTPATH"),
+        region = list(startLine = lint$line_number,
+                  startColumn = lint$column_number,
+                  snippet = list(text = lint$line))))
+    one_result <- append(one_result, c(locations = list(list(one_location))))
 
-    # lapply(lints_per_file, function(x) {
-    #   xml2::xml_add_child(
-    #     f, "error",
-    #     line = as.character(x$line_number),
-    #     column = as.character(x$column_number),
-    #     severity = switch(
-    #       x$type,
-    #       style = "info",
-    #       x$type
-    #     ),
-    #     message = x$message)
-    # })
-  })
+    sarif$runs[[1L]]$results <- append(sarif$runs[[1L]]$results, list(one_result))
+  }
 
   write(jsonlite::toJSON(sarif, pretty = TRUE, auto_unbox = TRUE), filename)
 }
