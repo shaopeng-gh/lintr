@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">lintr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.1.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.0.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -75,7 +75,7 @@
 
 
 <div class="row">
-  <main id="main"><div class="page-header">
+  <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Editor setup</h1>
             
       
@@ -121,7 +121,7 @@
 <div class="section level3">
 <h3 id="installation-1">Installation<a class="anchor" aria-label="anchor" href="#installation-1"></a>
 </h3>
-<p>Put the file <a href="inst/syntastic/lintr.vim">syntastic/lintr.vim</a> in <code>syntastic/syntax_checkers/r</code>. If you are using <a href="https://github.com/tpope/vim-pathogen" class="external-link">pathogen</a> this directory is <code>~/.vim/bundles/syntastic/syntax_checkers/r</code>.</p>
+<p>Put the file <a href="https://raw.githubusercontent.com/r-lib/lintr/v2.0.1/inst/syntastic/lintr.vim" class="external-link">syntastic/lintr.vim</a> in <code>syntastic/syntax_checkers/r</code>. If you are using <a href="https://github.com/tpope/vim-pathogen" class="external-link">pathogen</a> this directory is <code>~/.vim/bundles/syntastic/syntax_checkers/r</code>.</p>
 <p>You will also need to add the following lines to your <code>.vimrc</code>.</p>
 <pre class="vim"><code>let g:syntastic_enable_r_lintr_checker = 1
 let g:syntastic_r_checkers = ['lintr']</code></pre>
@@ -151,6 +151,10 @@ let g:syntastic_r_checkers = ['lintr']</code></pre>
 <pre class="vim"><code>let g:ale_r_lintr_lint_package = 1</code></pre>
 <p>See <code>:h ale_r_lintr</code> for more information.</p>
 <p>Note that configuration through <code>.lintr</code> files are not supported.</p>
+<p>There is a work around that can be used to read the contents of a <code>.lintr</code> file in the root of the working directory. This would allow the use of configuration through <code>.lintr</code> files.</p>
+<pre class="vim"><code>if filereadable(".lintr")
+  let g:ale_r_lintr_options = join(readfile('.lintr'))
+endif</code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -170,13 +174,13 @@ let g:syntastic_r_checkers = ['lintr']</code></pre>
 <h3 id="configuration-3">Configuration<a class="anchor" aria-label="anchor" href="#configuration-3"></a>
 </h3>
 <p>You can also configure what linters are used. e.g. disabling the assignment linter and using a different line length cutoff. In the SublimeLinter User Settings</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"linters"</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"lintr"</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"linters"</span><span class="fu">:</span> <span class="st">"linters_with_defaults(assignment_linter = NULL, line_length_linter(120))"</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"linters"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"lintr"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"linters"</span><span class="fu">:</span> <span class="st">"linters_with_defaults(assignment_linter = NULL, line_length_linter(120))"</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -190,14 +194,14 @@ let g:syntastic_r_checkers = ['lintr']</code></pre>
 <h3 id="installation-4">Installation<a class="anchor" aria-label="anchor" href="#installation-4"></a>
 </h3>
 <p>Simply install <code>linter-lintr</code> from within Atom or on the command line with:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apm</span> install linter-lintr</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apm</span> install linter-lintr</span></code></pre></div>
 <p>For more information and bug reports see <a href="https://github.com/AtomLinter/linter-lintr" class="external-link">Atom linter-lintr</a>.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="visual-studio-code">Visual Studio Code<a class="anchor" aria-label="anchor" href="#visual-studio-code"></a>
 </h2>
-<p>In Visual Studio Code, <a href="https://marketplace.visualstudio.com/items?itemName=REditorSupport.r" class="external-link">vscode-R</a> presents the lintr diagnostics from <a href="https://github.com/REditorSupport/languageserver" class="external-link">languageserver</a>.</p>
+<p>In Visual Studio Code, <a href="https://github.com/REditorSupport/vscode-R#r-extension-for-visual-studio-code" class="external-link">vscode-R</a> presents the lintr diagnostics from <a href="https://github.com/REditorSupport/languageserver" class="external-link">languageserver</a>.</p>
 <div class="figure">
 <img src="vscode.png" title="VS Code Example" alt=""><p class="caption">VS Code Example</p>
 </div>
@@ -205,8 +209,8 @@ let g:syntastic_r_checkers = ['lintr']</code></pre>
 <h3 id="installation-5">Installation<a class="anchor" aria-label="anchor" href="#installation-5"></a>
 </h3>
 <p>Installing <code>languageserver</code> package in R and <code>vscode-R</code> extension in VS Code will enable lintr in VS Code by default or run the following command lines:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">-e</span> <span class="st">'install.packages("languageserver")'</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">code</span> <span class="at">--install-extension</span> reditorsupport.r</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">-e</span> <span class="st">'install.packages("languageserver")'</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">code</span> <span class="at">--install-extension</span> reditorsupport.r</span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
@@ -222,7 +226,7 @@ let g:syntastic_r_checkers = ['lintr']</code></pre>
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
     </footer>

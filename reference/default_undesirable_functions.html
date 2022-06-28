@@ -14,7 +14,7 @@ Use modify_defaults() to produce a custom list."><!-- mathjax --><script src="ht
     
     <a class="navbar-brand me-2" href="../index.html">lintr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.1.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.0.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -68,13 +68,13 @@ Use <code><a href="modify_defaults.html">modify_defaults()</a></code> to produce
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="va">all_undesirable_functions</span>
-
-<span class="va">default_undesirable_functions</span>
-
-<span class="va">all_undesirable_operators</span>
-
-<span class="va">default_undesirable_operators</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="va">all_undesirable_functions</span></span>
+<span></span>
+<span><span class="va">default_undesirable_functions</span></span>
+<span></span>
+<span><span class="va">all_undesirable_operators</span></span>
+<span></span>
+<span><span class="va">default_undesirable_operators</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -117,9 +117,9 @@ instead.</p></li>
 <li><p><code><a href="https://rdrr.io/r/base/trace.html" class="external-link">trace()</a></code> traps a function and causes execution of arbitrary code when that function is run. It should be removed.</p></li>
 <li><p><code><a href="https://rdrr.io/r/base/debug.html" class="external-link">undebug()</a></code> is only useful for interactive debugging with <code><a href="https://rdrr.io/r/base/debug.html" class="external-link">debug()</a></code>. It should be removed.</p></li>
 <li><p><code><a href="https://rdrr.io/r/base/trace.html" class="external-link">untrace()</a></code> is only useful for interactive debugging with <code><a href="https://rdrr.io/r/base/trace.html" class="external-link">trace()</a></code>. It should be removed.</p></li>
-</ul><p>The following operators are sometimes regarded as undesirable:</p><ul><li><p><code>:::</code> accesses non-exported functions inside packages. Code relying on these is likely to
-break in future versions of the package because the functions are not part of the public interface and may be
-changed or removed by the maintainers without notice.
+</ul><p>The following operators are sometimes regarded as undesirable:</p><ul><li><p><code>:::</code> accesses non-exported functions inside packages. Code relying on these is
+likely to break in future versions of the package because the functions are not part of the public interface and
+may be changed or removed by the maintainers without notice.
 Use public functions via <code>::</code> instead.</p></li>
 <li><p><code><a href="https://rdrr.io/r/base/assignOps.html" class="external-link">&lt;&lt;-</a></code> and <code>-&gt;&gt;</code> assign outside the current environment in a way that can be hard to reason
 about. Prefer fully-encapsulated functions wherever possible, or, if necessary, assign to a specific environment
@@ -135,7 +135,7 @@ with <code><a href="https://rdrr.io/r/base/assign.html" class="external-link">as
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
     </footer></div>

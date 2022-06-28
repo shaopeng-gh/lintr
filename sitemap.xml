@@ -127,6 +127,9 @@
     <loc>https://lintr.r-lib.org/reference/exclude.html</loc>
   </url>
   <url>
+    <loc>https://lintr.r-lib.org/reference/executing_linters.html</loc>
+  </url>
+  <url>
     <loc>https://lintr.r-lib.org/reference/expect_comparison_linter.html</loc>
   </url>
   <url>
@@ -299,6 +302,9 @@
   </url>
   <url>
     <loc>https://lintr.r-lib.org/reference/robustness_linters.html</loc>
+  </url>
+  <url>
+    <loc>https://lintr.r-lib.org/reference/sarif_output.html</loc>
   </url>
   <url>
     <loc>https://lintr.r-lib.org/reference/semicolon_linter.html</loc>
